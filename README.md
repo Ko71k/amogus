@@ -194,11 +194,60 @@ class Monitor: virtual public Device {
 class Laptop: public Computer, public Monitor {};
 ```
 
-**Полиморфизм** — 
+**Полиморфизм** — атрибут, который позволяет использовать один и тот же интерфейс при реализации целого класса различных действий. Выбор того, какое именно действие будет совершено, определяется конкретной ситуацией.
 ```
+#include <iostream>
+#include <string>
+#include <sstream>
+#include <cstdlib>
 
+class Unit{
+protected:
+    int health;
+    virtual string getInfo() = 0;
+public:
+    Unit(int _health)
+        :health(_health)
+    {}
+    virtual void getDamage(int damage) = 0;
+friend ostream& operator<<(ostream &out, Unit *a);
+friend ostream& operator<<(ostream &out, Unit &a);
+};
+
+ostream& operator<<(ostream &out, Unit &a)
+{
+    out << a.getInfo();
+    return out;
+}
+class Human:public Unit{
+public:
+    Human(int _health):Unit(_health)
+    {}
+};
+
+class Soldier:public Human{
+private:
+    static const int max_health = 100;
+protected:
+    string getInfo()
+    {
+        stringstream info;
+        info << "Soldier, health = " << health;
+        return info.str();
+    }
+public:
+    Soldier():Human(max_health)
+    {}
+    void getDamage(int damage)
+    {
+        if (health > damage) {
+            health -= damage;
+        } else {
+            health = 0;
+        }
+    }
+};
 ```
-**Методы** —
 
 **Инкапсуляция** - объединение кода и данных таким образом, чтобы защищать данные от непреднамеренного использования и внешнего вмешательства. Основные типы доступа: private, protected, public.
 
